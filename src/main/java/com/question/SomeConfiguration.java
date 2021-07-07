@@ -4,7 +4,11 @@ import io.netty.handler.ssl.SslContext;
 import nl.altindag.ssl.SSLFactory;
 import nl.altindag.ssl.util.NettySslUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.embedded.netty.NettyServerCustomizer;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import reactor.core.scheduler.Schedulers;
+import reactor.netty.channel.MicrometerChannelMetricsRecorder;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
@@ -40,6 +44,13 @@ public class SomeConfiguration {
             e.printStackTrace();
         }
     }
+
+    @Bean
+    public NettyServerCustomizer nettyServerCustomizer() {
+        Schedulers.enableMetrics();
+        return httpServer -> httpServer.metrics(true, () -> new MicrometerChannelMetricsRecorder("test", "test"));
+    }
+
 
     /**
      * Gets external proxy web client.
