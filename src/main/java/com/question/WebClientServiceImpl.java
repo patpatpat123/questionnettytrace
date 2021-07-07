@@ -15,6 +15,7 @@ import reactor.netty.transport.ProxyProvider;
 import reactor.netty.transport.logging.AdvancedByteBufFormat;
 
 import java.net.InetSocketAddress;
+import java.util.function.Function;
 
 @Service
 public class WebClientServiceImpl {
@@ -32,6 +33,7 @@ public class WebClientServiceImpl {
     public Mono<String> sendPostRequest(String requestRefundToPartnerRequest) {
         final var httpClient      = HttpClient.create()
                 .wiretap("reactor.netty.http.client.HttpClient", LogLevel.INFO, AdvancedByteBufFormat.TEXTUAL)
+                .metrics(true, Function.identity())
                 .secure(sslContextSpec -> sslContextSpec.sslContext(someConfiguration.getExternalProxyWebClient()))
                 .proxy(proxy -> proxy.type(ProxyProvider.Proxy.HTTP).address(new InetSocketAddress(proxyUrl, 443)));
 
