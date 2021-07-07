@@ -39,7 +39,8 @@ public class WebClientServiceImpl {
 
         return WebClient.create(destinationUrl).mutate().clientConnector(new ReactorClientHttpConnector(decoratedClient)).build()
                 .post().body(BodyInserters.fromValue(requestRefundToPartnerRequest))
-                .exchangeToMono(clientResponse -> clientResponse.bodyToMono(String.class));
+                .exchangeToMono(clientResponse -> clientResponse.bodyToMono(String.class))
+                .name("METRICS").metrics();
     }
 
 }
